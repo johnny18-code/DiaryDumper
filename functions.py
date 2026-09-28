@@ -18,8 +18,10 @@ def listUsers():
     current_directory = os.getcwd()
     print(current_directory)
     path = f"{current_directory}\\users\\"
-
-    return os.listdir(path)
+    try: 
+        return os.listdir(path)
+    except FileNotFoundError:
+        return current_directory
 
 
 def publish(diaryParm, userLibraryParm):

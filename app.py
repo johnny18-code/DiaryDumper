@@ -22,7 +22,7 @@ import functions as SubMod
 
 currentDate = datetime.datetime.now().strftime("%d %B, %Y")
 userList = SubMod.listUsers()
-
+st.write(userList)
 positiveScores = []
 
 @st.dialog("Creating wonder name~")
