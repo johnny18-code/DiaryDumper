@@ -12,7 +12,10 @@ import time
 import streamlit as st
 import datetime
 import plotly.express as px
+import nltk
+nltk.download('vader_lexicon')
 from nltk.sentiment import SentimentIntensityAnalyzer 
+
 analyzer = SentimentIntensityAnalyzer()
 #sub-mod
 import functions as SubMod
