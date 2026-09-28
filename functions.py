@@ -1,5 +1,4 @@
 
-from nt import error
 import os
 import datetime as dt
 
@@ -10,7 +9,7 @@ def createUserFolder(userParam):
     try:
         os.makedirs(f"{current_directory}\\users\\{userName}")
         return "Success"
-    except error as e:
+    except FileNotFoundError as e:
         print(e)
         return "Failed"
 
@@ -45,7 +44,7 @@ def publish(diaryParm, userLibraryParm):
             with open(checkCurrentDateFile, mode="w") as file:
                 file.write(f"{diaryParm} \n")
                 return "Success"
-    except error as e:
+    except FileNotFoundError as e:
         return "Failed"
 
 
@@ -66,7 +65,7 @@ def getUserFolderDate(userParm):
         print("no data yet")
         returnDates.append(fileDate)
         returnContent.append("Today is kinda mild.")
-        return (returnDates,returnContent)
+        return (returnDates, returnContent)
     else:
         for content in listLoop:
             with open(f"{joinSpecificUser}\\{content}", "r") as readFile:
