@@ -16,6 +16,7 @@ def createUserFolder(userParam):
 
 def listUsers():
     current_directory = os.getcwd()
+    print(current_directory)
     path = f"{current_directory}\\users\\"
 
     return os.listdir(path)
