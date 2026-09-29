@@ -24,14 +24,10 @@ userList = SubMod.listUsers()
 # st.write(userList)
 positiveScores = []
 
-#degug catch text_area
-
-
+# degug catch text_area
 
 
 # debug end
-
-
 
 
 @st.dialog("Creating wonder name~", on_dismiss="rerun")
@@ -39,8 +35,8 @@ def checkUser():
 
     createUser = st.text_input("Decide your name")
     # debug start
-    debugResult = SubMod.debugPullDirectories(createUser)
-    st.write(debugResult)
+    # debugResult = SubMod.debugPullDirectories(createUser)
+    # st.write(debugResult)
     # debug end
     if st.button("Create user account"):
         time.sleep(1.3)
@@ -58,7 +54,8 @@ def checkUser():
             createFolder = SubMod.createUserFolder(createUser)
             if createFolder == "Success":
                 st.write("Folder Created")
-                st.write("You can close this modal and try to login!")
+                time.sleep(1.5)
+                st.write("Modal will be closed in 3 seconds...")
                 # just return success
                 time.sleep(3)
                 st.rerun()
@@ -99,7 +96,7 @@ else:
     # call user data?
     userContent = SubMod.getUserFolderDate(st.session_state["current_user"])
     diaryInput = st.text_area(
-        label=currentDate, placeholder="Ready to share your thoughts for today?",key="text_area")
+        label=currentDate, placeholder="Ready to share your thoughts for today?", key="text_area")
     print(diaryInput)
     if st.button("Publish"):
         print("Writing to your directory~")
@@ -107,12 +104,12 @@ else:
             diaryInput, st.session_state["current_user"])
         if publishResult == "Success":
             st.success("Your feelings have been recorded ☺️")
-            # 
+            #
             time.sleep(2)
 
             if "text_area" in st.session_state:
                 del st.session_state["text_area"]
-            
+
             if "text_area" not in st.session_state:
                 st.session_state.text_area = ""
 
