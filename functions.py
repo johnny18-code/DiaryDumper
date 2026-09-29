@@ -16,15 +16,23 @@ def createUserFolder(userParam):
 
 
 def listUsers():
+    os_name = platform.system()
     current_directory = os.getcwd()
     print(current_directory)
-    path = f"{current_directory}\\users\\"
+    
     try:
-        return os.listdir(path)
-    except FileNotFoundError:
+        if os_name == "Windows":
+             path = f"{current_directory}\\users\\"
+             return os.listdir(path)
+        elif os_name == "Linux":
+             path = f"{current_directory}/users/"
+             return os.listdir(path)
+        else:
+            return platform.system()
+    except FileNotFoundError as e:
         # {current_directory}/users
         # f"{current_directory}/users/
-        return os.listdir(f"{current_directory}/users/")
+        return {e}
 
 
 def publish(diaryParm, userLibraryParm):
