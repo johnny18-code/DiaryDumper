@@ -122,5 +122,5 @@ def debugPullDirectories(justPassPossibleName):
     if os_name == "Windows":
         return os.listdir(f"{current_directory}\\users)")
     if os_name == "Linux":
-        return os.listdir(f"{current_directory}/users)")
+        return [os.listdir(f"{current_directory}"), os.listdir(f"{current_directory}/users/")]
 # debug start
