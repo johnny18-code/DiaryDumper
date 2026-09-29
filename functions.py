@@ -33,7 +33,7 @@ def listUsers():
             path = f"{current_directory}\\users\\"
             return os.listdir(path)
         elif os_name == "Linux":
-            path = f"{current_directory}/users/johnny/"
+            path = f"{current_directory}/users/"
             return os.listdir(path)
         else:
             return platform.system()
@@ -115,5 +115,12 @@ def getUserFolderDate(userParm):
         return (returnDates, returnContent)
 
 
-#
-# getUserFolderDate("da")
+# debug start
+# pull directories when creating a new folder
+
+def debugPullDirectories(justPassPossibleName):
+    if os_name == "Windows":
+        return os.listdir(f"{current_directory}\\users)")
+    if os_name == "Linux":
+        return os.listdir(f"{current_directory}/users)")
+# debug start
