@@ -3,6 +3,7 @@ import os
 import datetime as dt
 import platform
 
+
 os_name = platform.system()
 current_directory = os.getcwd()
 
@@ -23,6 +24,8 @@ def createUserFolder(userParam):
     except FileExistsError as e:
         print(e)
         return "Failed"
+    except FileNotFoundError as e:
+        return e
 
 
 def listUsers():
@@ -120,7 +123,11 @@ def getUserFolderDate(userParm):
 
 def debugPullDirectories(justPassPossibleName):
     if os_name == "Windows":
-        return os.listdir(f"{current_directory}\\users)")
+        return os.listdir(f"{current_directory}\\users\\")
     if os_name == "Linux":
         return [os.listdir(f"{current_directory}"), os.listdir(f"{current_directory}/users/")]
 # debug start
+
+
+
+

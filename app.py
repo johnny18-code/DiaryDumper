@@ -21,8 +21,17 @@ analyzer = SentimentIntensityAnalyzer()
 
 currentDate = datetime.datetime.now().strftime("%d %B, %Y")
 userList = SubMod.listUsers()
-st.write(userList)
+# st.write(userList)
 positiveScores = []
+
+#degug catch text_area
+
+
+
+
+# debug end
+
+
 
 
 @st.dialog("Creating wonder name~", on_dismiss="rerun")
@@ -51,11 +60,16 @@ def checkUser():
                 st.write("Folder Created")
                 st.write("You can close this modal and try to login!")
                 # just return success
-                return createFolder
+                time.sleep(3)
+                st.rerun()
             else:
                 st.error("Failed on creating folder")
+                time.sleep(3)
+                st.rerun()
         else:
             st.error("Toink, please use another name")
+            time.sleep(3)
+            st.rerun()
 
 
 if "userLoggedIn" not in st.session_state:
@@ -85,7 +99,7 @@ else:
     # call user data?
     userContent = SubMod.getUserFolderDate(st.session_state["current_user"])
     diaryInput = st.text_area(
-        label=currentDate, placeholder="Ready to share your thoughts for today?", key="text_area")
+        label=currentDate, placeholder="Ready to share your thoughts for today?",key="text_area")
     print(diaryInput)
     if st.button("Publish"):
         print("Writing to your directory~")
@@ -93,7 +107,15 @@ else:
             diaryInput, st.session_state["current_user"])
         if publishResult == "Success":
             st.success("Your feelings have been recorded ☺️")
+            # 
             time.sleep(2)
+
+            if "text_area" in st.session_state:
+                del st.session_state["text_area"]
+            
+            if "text_area" not in st.session_state:
+                st.session_state.text_area = ""
+
             st.rerun()
 
         else:
