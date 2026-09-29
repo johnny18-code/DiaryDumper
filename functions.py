@@ -1,6 +1,7 @@
 
 import os
 import datetime as dt
+import platform
 
 
 def createUserFolder(userParam):
@@ -21,7 +22,7 @@ def listUsers():
     try:
         return os.listdir(path)
     except FileNotFoundError:
-        return os.listdir()
+        return [os.listdir("users"), platform.system()]
 
 
 def publish(diaryParm, userLibraryParm):
