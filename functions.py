@@ -3,30 +3,38 @@ import os
 import datetime as dt
 import platform
 
+os_name = platform.system()
+current_directory = os.getcwd()
+
 
 def createUserFolder(userParam):
     userName = str(userParam)
-    current_directory = os.getcwd()
+
     try:
-        os.makedirs(f"{current_directory}\\users\\{userName}")
-        return "Success"
-    except FileNotFoundError as e:
+        if os_name == "Windows":
+            os.makedirs(f"{current_directory}\\users\\{userName}")
+            return "Success"
+        elif os_name == "Linux":
+            os.makedirs(f"{current_directory}/users/{userName}")
+            return "Success"
+        else:
+            return platform.system()
+
+    except FileExistsError as e:
         print(e)
         return "Failed"
 
 
 def listUsers():
     os_name = platform.system()
-    current_directory = os.getcwd()
-    print(current_directory)
-    
+
     try:
         if os_name == "Windows":
-             path = f"{current_directory}\\users\\"
-             return os.listdir(path)
+            path = f"{current_directory}\\users\\"
+            return os.listdir(path)
         elif os_name == "Linux":
-             path = f"{current_directory}/users/"
-             return os.listdir(path)
+            path = f"{current_directory}/users/"
+            return os.listdir(path)
         else:
             return platform.system()
     except FileNotFoundError as e:
@@ -41,9 +49,13 @@ def publish(diaryParm, userLibraryParm):
     currentDate = str(dt.datetime.now())
     fileDate = currentDate[:10]
 
-    workingDirectory = os.getcwd()
+    if os_name == "Windows":
+        path = os.path.join(current_directory, f"users\\{userLibraryParm}\\")
+    elif os_name == "Linux":
+        path = os.path.join(current_directory, f"users/{userLibraryParm}/")
+    else:
+        return platform.system()
 
-    path = os.path.join(workingDirectory, f"users\\{userLibraryParm}\\")
     checkCurrentDateFile = f"{path}{fileDate}.txt"
     try:
         if os.path.exists(checkCurrentDateFile):
@@ -59,22 +71,29 @@ def publish(diaryParm, userLibraryParm):
                 file.write(f"{diaryParm} \n")
                 return "Success"
     except FileNotFoundError as e:
+        return "FNFE - Failed"
+    except Exception as e:
         return "Failed"
 
 
 def getUserFolderDate(userParm):
+    listLoop = ""
     print("Get User data Folder")
     print("Return array of tupples")
     currentDate = str(dt.datetime.now())
     fileDate = currentDate[:10] + ".txt"
     returnDates = []
     returnContent = []
-    cwd = os.getcwd()
-    joinUserFolder = os.path.join(cwd, "users")
+
+    joinUserFolder = os.path.join(current_directory, "users")
     joinSpecificUser = os.path.join(joinUserFolder, userParm)
     print(joinSpecificUser, fileDate)
 
-    listLoop = os.listdir(f"{joinSpecificUser}\\")
+    if os_name == "Windows":
+        listLoop = os.listdir(f"{joinSpecificUser}\\")
+    elif os_name == "Linux":
+        listLoop = os.listdir(f"{joinSpecificUser}/")
+
     if len(listLoop) == 0:
         print("no data yet")
         returnDates.append(fileDate)
@@ -82,10 +101,16 @@ def getUserFolderDate(userParm):
         return (returnDates, returnContent)
     else:
         for content in listLoop:
-            with open(f"{joinSpecificUser}\\{content}", "r") as readFile:
-                returnDates.append(content.strip(".txt"))
-                data = readFile.read()
-                returnContent.append(data)
+            if os_name == "Windows":
+                with open(f"{joinSpecificUser}\\{content}", "r") as readFile:
+                    returnDates.append(content.strip(".txt"))
+                    data = readFile.read()
+                    returnContent.append(data)
+            elif os_name == "Linux":
+                with open(f"{joinSpecificUser}/{content}", "r") as readFile:
+                    returnDates.append(content.strip(".txt"))
+                    data = readFile.read()
+                    returnContent.append(data)
 
         return (returnDates, returnContent)
 

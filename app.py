@@ -25,7 +25,7 @@ userList = SubMod.listUsers()
 st.write(userList)
 positiveScores = []
 
-@st.dialog("Creating wonder name~")
+@st.dialog("Creating wonder name~", on_dismiss="rerun")
 def checkUser():
     createUser = st.text_input("Decide your name")
     if st.button("Create user account"):
