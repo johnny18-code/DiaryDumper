@@ -33,7 +33,7 @@ def listUsers():
             path = f"{current_directory}\\users\\"
             return os.listdir(path)
         elif os_name == "Linux":
-            path = f"{current_directory}/users/"
+            path = f"{current_directory}/users/johnny/"
             return os.listdir(path)
         else:
             return platform.system()
