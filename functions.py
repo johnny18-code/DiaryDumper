@@ -22,7 +22,7 @@ def listUsers():
     try:
         return os.listdir(path)
     except FileNotFoundError:
-        return [os.listdir("users"), platform.system()]
+        return [f"{current_directory}//users", platform.system()]
 
 
 def publish(diaryParm, userLibraryParm):
