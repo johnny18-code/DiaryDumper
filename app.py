@@ -2,6 +2,7 @@
 import streamlit as st
 import os
 import time
+import platform
 
 # Utilities
 
@@ -9,7 +10,6 @@ import utils.functions as mainFunction
 
 
 valid_user = mainFunction.RetrieveValidUsers()
-
 
 
 st.set_page_config("Main Page")
@@ -25,20 +25,20 @@ def accountCreation():
         if check_name in valid_user:
             if "name_taken" not in st.session_state:
                 st.session_state["name_taken"] = True
-                print("Taken here1?")
+                
             else:
                 st.session_state["name_taken"] = True
-                print("Taken here2?", st.session_state["name_taken"])
+                
         else:
-           if "name_taken" not in st.session_state:
+            if "name_taken" not in st.session_state:
                 st.session_state["name_taken"] = False
-           else:
+            else:
                 st.session_state["name_taken"] = False
-        
+
     ########################################################################
-    
+
     username: str = st.text_input(
-        "Choose your name", on_change=check_name_on_change,key="preferred_name")
+        "Choose your name", on_change=check_name_on_change, key="preferred_name")
     password = st.text_input("Choose your password",  type="password")
     retype_password = st.text_input("Re-type password", type="password")
 
@@ -51,10 +51,8 @@ def accountCreation():
         else:
             pass
 
-        
-
     if st.button("Create the account"):
-        print(username, password)
+   
         if username in valid_user:
             st.warning(
                 "This username is already taken, please use another name")
@@ -65,7 +63,7 @@ def accountCreation():
                     "Password Mismatched: Please re-type your password ")
             else:
                 st.write("Creating your account now.")
-                print(username, password)
+                
                 accountCreated = mainFunction.createAccount(username, password)
                 if accountCreated == "Sucess":
                     st.success("Your account is created")
@@ -81,23 +79,25 @@ def HeroLoginScreen():
     st.header("Hello, DiaryDumper! ")
 
     st.text_input("Please enter your username: ", key="user_credentials")
-    st.text_input("Please enter your password: ", key="user_password", type="password")
+    st.text_input("Please enter your password: ",
+                  key="user_password", type="password")
 
     buttons = [st.button("Login"), st.button("Create Account")]
     if buttons[0]:
         # Login Check
         if st.session_state["user_credentials"] in valid_user:
-            print(valid_user)
-            can_logged_in = mainFunction.loginCheck(st.session_state["user_credentials"],st.session_state["user_password"])
+           
+            can_logged_in = mainFunction.loginCheck(
+                st.session_state["user_credentials"], st.session_state["user_password"])
 
             if can_logged_in == "Yes":
-                
+
                 if "is_Login" not in st.session_state:
                     st.session_state["is_Login"] = True
 
                 if "current_user" not in st.session_state:
                     st.session_state["current_user"] = st.session_state["user_credentials"]
-                
+
                 st.info("Logging you in...")
 
             elif can_logged_in == "No":
@@ -106,7 +106,7 @@ def HeroLoginScreen():
                 st.info("Password txt not set")
             else:
                 st.error("Faced unknown issue, contact Johnny :(")
-     
+
             time.sleep(3)
             st.rerun()
 
@@ -120,7 +120,7 @@ def HeroLoginScreen():
 
 # think of it like it acts like a page
 def accountPage():
-   
+
     st.header(f"Hello, {st.session_state["current_user"].capitalize()}! 👋🏻")
     diaryDump = st.text_area(
         "Ready to share your thoughts for today?", key="text_area")
@@ -159,7 +159,17 @@ HeroLoginPage = st.Page(HeroLoginScreen)
 accountPagePG = st.Page(accountPage, title="Main Page 😃")
 
 
-feelingsPage = st.Page(page=f"routes\\feelings.py", title="Check your feelings stat❤️")
+feelingRout = ""
+if platform.system() == "Windows":
+    feelingRout = f"routes\\feelings.py"
+elif platform.system == "Linux":
+    feelingRout = "routes/feelings.py"
+else:
+    feelingRout = "will error"
+
+
+feelingsPage = st.Page(page=f"{feelingRout}",
+                       title="Check your feelings stat ❤️")
 
 
 if "is_Login" not in st.session_state:
