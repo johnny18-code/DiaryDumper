@@ -1,144 +1,180 @@
-# This is check if the username already existing
-# if not then create?
-
-
-from nltk.sentiment import SentimentIntensityAnalyzer
-import functions as SubMod
-from ast import Sub
-from numpy import positive
-from streamlit.delta_generator import DeltaGenerator
-
-
-import time
+from turtle import onkeypress
+from pyarrow import duration
 import streamlit as st
-import datetime
-import plotly.express as px
-import nltk
-nltk.download('vader_lexicon')
 
-analyzer = SentimentIntensityAnalyzer()
-# sub-mod
+import os
+import time
 
-currentDate = datetime.datetime.now().strftime("%d %B, %Y")
-userList = SubMod.listUsers()
-# st.write(userList)
-positiveScores = []
+# Utilities
 
-# degug catch text_area
+import utils.functions as mainFunction
 
 
-# debug end
+valid_user = mainFunction.RetrieveValidUsers()
 
 
-@st.dialog("Creating wonder name~", on_dismiss="rerun")
-def checkUser():
 
-    createUser = st.text_input("Decide your name")
-    # debug start
-    # debugResult = SubMod.debugPullDirectories(createUser)
-    # st.write(debugResult)
-    # debug end
-    if st.button("Create user account"):
-        time.sleep(1.3)
-        st.write("Checking user name...")
-        time.sleep(1.3)
-        st.write("Give me some time...")
-        time.sleep(1.3)
-        st.write("Here I go!")
-        time.sleep(1.3)
-        if createUser not in userList:
-            st.write("This name can be used :)")
-            time.sleep(1)
-            st.write(f"{createUser} is registered. Do not forget it!!!")
-            # call createPersonal folder
-            createFolder = SubMod.createUserFolder(createUser)
-            if createFolder == "Success":
-                st.write("Folder Created")
-                time.sleep(1.5)
-                st.write("Modal will be closed in 3 seconds...")
-                # just return success
-                time.sleep(3)
-                st.rerun()
+st.set_page_config("Main Page")
+
+
+@st.fragment(key="create")
+@st.dialog("Create Account")
+def accountCreation():
+    # task def on change check if user is valid.
+    def check_name_on_change():
+        check_name = st.session_state["preferred_name"]
+        valid_user = mainFunction.RetrieveValidUsers()
+        if check_name in valid_user:
+            if "name_taken" not in st.session_state:
+                st.session_state["name_taken"] = True
+                print("Taken here1?")
             else:
-                st.error("Failed on creating folder")
-                time.sleep(3)
-                st.rerun()
+                st.session_state["name_taken"] = True
+                print("Taken here2?", st.session_state["name_taken"])
         else:
-            st.error("Toink, please use another name")
+           if "name_taken" not in st.session_state:
+                st.session_state["name_taken"] = False
+           else:
+                st.session_state["name_taken"] = False
+        
+    ########################################################################
+    
+    username: str = st.text_input(
+        "Choose your name", on_change=check_name_on_change,key="preferred_name")
+    password = st.text_input("Choose your password",  type="password")
+    retype_password = st.text_input("Re-type password", type="password")
+
+    if "name_taken" not in st.session_state:
+        st.session_state["name_taken"] = False
+    else:
+        if st.session_state["name_taken"] == True:
+            st.warning(
+                "This username is already taken, please use another name")
+        else:
+            pass
+
+        
+
+    if st.button("Create the account"):
+        print(username, password)
+        if username in valid_user:
+            st.warning(
+                "This username is already taken, please use another name")
+        elif username not in valid_user:
+
+            if password != retype_password:
+                st.warning(
+                    "Password Mismatched: Please re-type your password ")
+            else:
+                st.write("Creating your account now.")
+                print(username, password)
+                accountCreated = mainFunction.createAccount(username, password)
+                if accountCreated == "Sucess":
+                    st.success("Your account is created")
+                    time.sleep(4)
+                    st.rerun()
+                else:
+                    st.error("Apologies, try sometime... unknown issue occured")
+                    time.sleep(4)
+                    st.rerun()
+
+
+def HeroLoginScreen():
+    st.header("Hello, DiaryDumper! ")
+
+    st.text_input("Please enter your username: ", key="user_credentials")
+    st.text_input("Please enter your password: ", key="user_password", type="password")
+
+    buttons = [st.button("Login"), st.button("Create Account")]
+    if buttons[0]:
+        # Login Check
+        if st.session_state["user_credentials"] in valid_user:
+            print(valid_user)
+            can_logged_in = mainFunction.loginCheck(st.session_state["user_credentials"],st.session_state["user_password"])
+
+            if can_logged_in == "Yes":
+                
+                if "is_Login" not in st.session_state:
+                    st.session_state["is_Login"] = True
+
+                if "current_user" not in st.session_state:
+                    st.session_state["current_user"] = st.session_state["user_credentials"]
+                
+                st.info("Logging you in...")
+
+            elif can_logged_in == "No":
+                st.error("Invalid Password")
+            elif can_logged_in == "Password not Set":
+                st.info("Password txt not set")
+            else:
+                st.error("Faced unknown issue, contact Johnny :(")
+     
             time.sleep(3)
             st.rerun()
 
-
-if "userLoggedIn" not in st.session_state:
-    st.header("Welcome, Diary Dumper!", text_alignment="center")
-    userInput = st.text_input("Place your wondername")
-    if st.button("Login"):
-        if userInput in userList:
-            # logging you in~
-            print("here")
-            if "current_user" not in st.session_state:
-                st.session_state["current_user"] = userInput
-                st.session_state["userLoggedIn"] = True
-                st.rerun()
         else:
-            st.warning(
-                "If you want to use this name, create account using this!")
-            time.sleep(5)
-            st.rerun()
-    elif st.button("Create account"):
-        result = checkUser()
-        if result == "Success":
-            st.rerun()
+            print("Not a valid User")
+
+    elif buttons[1]:
+        # call the pop-up
+        accountCreation()
 
 
-else:
-    st.header(f"Bonjour! {st.session_state["current_user"].capitalize()} 👋🏻")
-    # call user data?
-    userContent = SubMod.getUserFolderDate(st.session_state["current_user"])
-    diaryInput = st.text_area(
-        label=currentDate, placeholder="Ready to share your thoughts for today?", key="text_area")
-    print(diaryInput)
+# think of it like it acts like a page
+def accountPage():
+   
+    st.header(f"Hello, {st.session_state["current_user"].capitalize()}! 👋🏻")
+    diaryDump = st.text_area(
+        "Ready to share your thoughts for today?", key="text_area")
+
     if st.button("Publish"):
-        print("Writing to your directory~")
-        publishResult = SubMod.publish(
-            diaryInput, st.session_state["current_user"])
-        if publishResult == "Success":
-            st.success("Your feelings have been recorded ☺️")
-            #
-            time.sleep(2)
+        publishStory = mainFunction.PublishStory(
+            st.session_state["current_user"], diaryDump)
+        match publishStory:
+            case "Appended":
+                st.success("Your story got appended for today.")
+            case "Successful":
+                st.success("Your story got created for today.")
+            case _:
+                st.warning(
+                    "Unknown error occured -- Account Page, try again later ")
 
-            if "text_area" in st.session_state:
-                del st.session_state["text_area"]
+        if "text_area" in st.session_state:
+            del st.session_state["text_area"]
 
             if "text_area" not in st.session_state:
                 st.session_state.text_area = ""
 
-            st.rerun()
-
-        else:
-            st.error("Sorry, but we have encountered error 🙁")
-            time.sleep(2)
-            st.rerun()
-
-    for para in userContent[1]:
-        score = analyzer.polarity_scores(para)
-        positiveScores.append(score["pos"])
-
-    # plot here?
-    st.subheader("Mood Tone")
-    figurePos = px.line(x=userContent[0], y=positiveScores, labels={
-                        "x": "Date", "y": "Positivity!"})
-    # to show hte chart in Streamlit
-    st.plotly_chart(figurePos)
-
-    # logout
-    if st.button("Logout", type="secondary"):
-        st.write("Logging you out...")
-        del st.session_state["userLoggedIn"]
-        del st.session_state["current_user"]
-        del st.session_state["text_area"]
-        time.sleep(5)
+        time.sleep(1)
         st.rerun()
 
+    elif st.button("Logout"):
 
-# plotting now
+        del st.session_state["is_Login"]
+        del st.session_state["current_user"]
+        st.rerun()
+# end account page function
+
+
+HeroLoginPage = st.Page(HeroLoginScreen)
+
+accountPagePG = st.Page(accountPage, title="Main Page 😃")
+
+
+feelingsPage = st.Page(page=f"routes\\feelings.py", title="Check your feelings stat❤️")
+
+
+if "is_Login" not in st.session_state:
+
+    pg = st.navigation([HeroLoginPage])
+
+else:
+
+    pg = st.navigation(
+        {"Account": [accountPagePG],
+         "Feelings": [feelingsPage]
+
+         })
+
+
+pg.run()  # this will render the PG pages.
