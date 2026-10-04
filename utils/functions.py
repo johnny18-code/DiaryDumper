@@ -7,6 +7,9 @@ WINDOWS = "Windows"
 JAVA = "Java"
 LINUX = "Linux"
 
+# Repetitive check to OS version
+# will refactor once not get lazy.
+
 current_working_directory = os.getcwd()
 current_operating_system = platform.system()
 
@@ -173,11 +176,8 @@ def retrieveDieries(parmUser):
     # print(diaries)
     content = []
     for diary in diaries:
-        with open(f"{pathUsers}{diary}",mode="r") as readFile:
+        with open(f"{pathUsers}{diary}", mode="r") as readFile:
             data = readFile.read()
-            content.append((diary,data))
+            content.append((diary, data))
 
     return content
-
-
-retrieveDieries("bernadette")
