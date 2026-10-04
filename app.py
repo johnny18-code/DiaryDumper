@@ -25,10 +25,10 @@ def accountCreation():
         if check_name in valid_user:
             if "name_taken" not in st.session_state:
                 st.session_state["name_taken"] = True
-                
+
             else:
                 st.session_state["name_taken"] = True
-                
+
         else:
             if "name_taken" not in st.session_state:
                 st.session_state["name_taken"] = False
@@ -52,7 +52,7 @@ def accountCreation():
             pass
 
     if st.button("Create the account"):
-   
+
         if username in valid_user:
             st.warning(
                 "This username is already taken, please use another name")
@@ -63,7 +63,7 @@ def accountCreation():
                     "Password Mismatched: Please re-type your password ")
             else:
                 st.write("Creating your account now.")
-                
+
                 accountCreated = mainFunction.createAccount(username, password)
                 if accountCreated == "Sucess":
                     st.success("Your account is created")
@@ -86,7 +86,7 @@ def HeroLoginScreen():
     if buttons[0]:
         # Login Check
         if st.session_state["user_credentials"] in valid_user:
-           
+
             can_logged_in = mainFunction.loginCheck(
                 st.session_state["user_credentials"], st.session_state["user_password"])
 
@@ -162,7 +162,7 @@ accountPagePG = st.Page(accountPage, title="Main Page 😃")
 feelingRout = ""
 if platform.system() == "Windows":
     feelingRout = f"routes\\feelings.py"
-elif platform.system == "Linux":
+elif platform.system() == "Linux":
     feelingRout = "routes/feelings.py"
 else:
     feelingRout = "will error"
